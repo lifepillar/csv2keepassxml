@@ -87,7 +87,7 @@ OptionParser.new do |opts|
   opts.on("-H", "--[no-]header", "Parse a CSV with/without header") do |o|
     options[:header] = o
   end
-  opts.on("-M", "--macoskeychain", "Parse output of CSVKeychain") do |o|
+  opts.on("-M", "--macoskeychain", "Parse the output of CSVKeychain") do |o|
     options[:macoskeychain] = o
   end
   opts.on("-h", "--help", "Prints this help") do

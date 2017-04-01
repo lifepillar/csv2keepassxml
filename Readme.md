@@ -15,7 +15,7 @@ Usage: csv2keepassxml [options] <path>
     -U, --url NUM                    Column number of URLs
     -d, --dbname NAME                Name of the database
     -H, --[no-]header                Parse a CSV with/without header
-    -M, --macoskeychain              Parse output of CSVKeychain
+    -M, --macoskeychain              Parse the output of CSVKeychain
     -h, --help                       Prints this help
     -v, --[no-]verbose               Be verbose
 ```
