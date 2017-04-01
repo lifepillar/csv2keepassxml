@@ -3,7 +3,6 @@
 
 # Convert a CSV file into a KeePass 2 XML file.
 
-require 'base64'
 require 'csv'
 require 'date'
 require 'htmlentities'
