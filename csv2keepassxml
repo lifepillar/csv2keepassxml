@@ -5,6 +5,7 @@
 
 require 'base64'
 require 'csv'
+require 'date'
 require 'htmlentities'
 require 'optparse'
 require 'securerandom'
@@ -43,16 +44,39 @@ def password_item(record, coder)
   return item
 end
 
-def xml_entry(record)
- s  = "<Entry>"
- s += "<UUID>#{base64_uuid()}</UUID>"
+def xml_entry(record, timestamp, options = {})
+  s  = "<Entry>"
+  s += "<UUID>#{options.fetch(:uuid, base64_uuid())}</UUID>"
+  s += "<IconID>0</IconID>"
+  s += "<ForegroundColor/>"
+  s += "<BackgroundColor/>"
+  s += "<OverrideURL/>"
+  s += "<Tags/>"
+  s += "<Times>"
+  s += "<LastModificationTime>#{timestamp}</LastModificationTime>"
+  s += "<CreationTime>#{timestamp}</CreationTime>"
+  s += "<LastAccessTime>#{timestamp}</LastAccessTime>"
+  s += "<ExpiryTime>4001-01-01T00:00:00Z</ExpiryTime>"
+  s += "<Expires>False</Expires>"
+  s += "<UsageCount>0</UsageCount>"
+  s += "<LocationChanged>#{timestamp}</LocationChanged>"
+  s += "</Times>"
   record.each do |k,v|
     next if v.nil? or v.empty?
     s += "<String>"
     s += "<Key>#{k}</Key>"
-    s += "<Value>#{v}</Value>"
+    if k == 'Password'
+      s += "<Value ProtectedInMemory=\"True\">#{v}</Value>"
+    else
+      s += "<Value>#{v}</Value>"
+    end
     s += "</String>"
   end
+  s += "<AutoType>"
+  s += "<Enabled>True</Enabled>"
+  s += "<DataTransferObfuscation>0</DataTransferObfuscation>"
+  s += "</AutoType>"
+  s += "<History/>"
   s += '</Entry>'
   return s
 end
@@ -118,14 +142,7 @@ GROUP    = options.fetch(:group,     options.fetch(:macoskeychain, false) ? 14 :
 
 coder = HTMLEntities.new
 
-items = {
-  'General' => [],
-  'EMail' => [],
-  'Internet' => [],
-  'Network' => [],
-  'Notes' => []
-}
-
+items = { 'General' => [] }
 n = 0
 CSV.foreach(input_file, :headers => options.fetch(:header, true)) do |row|
   n += 1
@@ -141,28 +158,92 @@ end
 puts "Parsed #{n} rows." if options[:verbose]
 
 num_entries = 0
+timestamp = DateTime.now.strftime("%Y-%m-%dT%H:%M:%SZ")
+general_uuid = base64_uuid()
+last_top_visible_entry_uuid = base64_uuid()
 File.open(output_file, 'w') do |f|
-  f.puts '<?xml version="1.0" encoding="utf-8" standalone="yes"?>'
-  f.puts '<KeePassFile>'
-  f.puts '  <Meta>'
-  f.puts '    <Generator>csv2keepassxml</Generator>'
+  f.puts '<?xml version="1.0" encoding="UTF-8"?>'
+  f.puts "<KeePassFile>"
+  f.puts "  <Meta>"
+  f.puts "    <Generator>csv2keepassxml</Generator>"
   f.puts "    <DatabaseName>#{options[:dbname]}</DatabaseName>"
-  f.puts '  </Meta>'
-  f.puts '<Root>'
-  f.puts '  <Group>'
-  f.puts "    <UUID>#{base64_uuid()}</UUID>"
-  f.puts "    <Name>General</Name>"
-  f.puts '    <Notes />'
+  f.puts "    <DatabaseNameChanged>#{timestamp}</DatabaseNameChanged>"
+  f.puts "    <DatabaseDescription/>"
+  f.puts "    <DatabaseDescriptionChanged>#{timestamp}</DatabaseDescriptionChanged>"
+  f.puts "    <DefaultUserName/>"
+  f.puts "    <DefaultUserNameChanged>#{timestamp}</DefaultUserNameChanged>"
+  f.puts "    <MaintenanceHistoryDays>365</MaintenanceHistoryDays>"
+  f.puts "    <Color/>"
+  f.puts "    <MasterKeyChanged>#{timestamp}</MasterKeyChanged>"
+  f.puts "    <MasterKeyChangeRec>-1</MasterKeyChangeRec>"
+  f.puts "    <MasterKeyChangeForce>-1</MasterKeyChangeForce>"
+  f.puts "    <MemoryProtection>"
+  f.puts "      <ProtectTitle>False</ProtectTitle>"
+  f.puts "      <ProtectUserName>False</ProtectUserName>"
+  f.puts "      <ProtectPassword>True</ProtectPassword>"
+  f.puts "      <ProtectURL>False</ProtectURL>"
+  f.puts "      <ProtectNotes>False</ProtectNotes>"
+  f.puts "    </MemoryProtection>"
+  f.puts "    <RecycleBinEnabled>False</RecycleBinEnabled>"
+  f.puts "    <RecycleBinUUID>AAAAAAAAAAAAAAAAAAAAAA==</RecycleBinUUID>"
+  f.puts "    <RecycleBinChanged>#{timestamp}</RecycleBinChanged>"
+  f.puts "    <EntryTemplatesGroup>AAAAAAAAAAAAAAAAAAAAAA==</EntryTemplatesGroup>"
+  f.puts "    <EntryTemplatesGroupChanged>#{timestamp}</EntryTemplatesGroupChanged>"
+  f.puts "    <HistoryMaxItems>10</HistoryMaxItems>"
+  f.puts "    <HistoryMaxSize>6291456</HistoryMaxSize>"
+  # f.puts "    <LastSelectedGroup>#{general_uuid}</LastSelectedGroup>"
+  f.puts "    <LastTopVisibleGroup>AAAAAAAAAAAAAAAAAAAAAA==</LastTopVisibleGroup>"
+  f.puts "    <Binaries/>"
+  f.puts "    <CustomData/>"
+  f.puts "  </Meta>"
+  f.puts "  <Root>"
+  f.puts "    <Group>"
+  f.puts "      <UUID>#{general_uuid}</UUID>"
+  f.puts "      <Name>General</Name>"
+  f.puts "      <Notes/>"
+  f.puts "      <IconID>48</IconID>"
+  f.puts "        <Times>"
+  f.puts "        <LastModificationTime>#{timestamp}</LastModificationTime>"
+  f.puts "        <CreationTime>#{timestamp}</CreationTime>"
+  f.puts "        <LastAccessTime>#{timestamp}</LastAccessTime>"
+  f.puts "        <ExpiryTime>4001-01-01T00:00:00Z</ExpiryTime>"
+  f.puts "        <Expires>False</Expires>"
+  f.puts "        <UsageCount>0</UsageCount>"
+  f.puts "        <LocationChanged>#{timestamp}</LocationChanged>"
+  f.puts "      </Times>"
+  f.puts "      <IsExpanded>True</IsExpanded>"
+  f.puts "      <DefaultAutoTypeSequence/>"
+  f.puts "      <EnableAutoType>null</EnableAutoType>"
+  f.puts "      <EnableSearching>null</EnableSearching>"
+  f.puts "      <LastTopVisibleEntry>AAAAAAAAAAAAAAAAAAAAAA==</LastTopVisibleEntry>"
+
+  is_first = true
   items['General'].each do |record|
-    f.puts xml_entry(record)
+    f.puts xml_entry(record, timestamp)
     num_entries += 1
   end
   items.keys.select { |k| k != 'General' }.each do |group|
     f.puts '    <Group>'
     f.puts "      <UUID>#{base64_uuid()}</UUID>"
     f.puts "      <Name>#{coder.encode(group)}</Name>"
+    f.puts "      <Notes/>"
+    f.puts "      <IconID>0</IconID>"
+    f.puts "      <Times>"
+    f.puts "        <LastModificationTime>#{timestamp}</LastModificationTime>"
+    f.puts "        <CreationTime>#{timestamp}</CreationTime>"
+    f.puts "        <LastAccessTime>#{timestamp}</LastAccessTime>"
+    f.puts "        <ExpiryTime>4001-01-01T00:00:00Z</ExpiryTime>"
+    f.puts "        <Expires>False</Expires>"
+    f.puts "        <UsageCount>0</UsageCount>"
+    f.puts "        <LocationChanged>#{timestamp}</LocationChanged>"
+    f.puts "      </Times>"
+    f.puts "      <IsExpanded>True</IsExpanded>"
+    f.puts "      <DefaultAutoTypeSequence/>"
+    f.puts "      <EnableAutoType>null</EnableAutoType>"
+    f.puts "      <EnableSearching>null</EnableSearching>"
+    f.puts "      <LastTopVisibleEntry>AAAAAAAAAAAAAAAAAAAAAA==</LastTopVisibleEntry>"
     items[group].each do |record|
-      f.puts xml_entry(record)
+      f.puts xml_entry(record, timestamp)
       num_entries += 1
     end
     f.puts '    </Group>'
