@@ -82,7 +82,7 @@ OptionParser.new do |opts|
     options[:group] = o
   end
   opts.on("-n", "--notes NUM", Integer, "Column number of notes") do |o|
-    options[:password] = o
+    options[:notes] = o
   end
   opts.on("-p", "--password NUM", Integer, "Column number of passwords") do |o|
     options[:password] = o
