@@ -175,7 +175,7 @@ File.open(output_file, 'w') do |f|
   f.puts "    <DefaultUserNameChanged>#{timestamp}</DefaultUserNameChanged>"
   f.puts "    <MaintenanceHistoryDays>365</MaintenanceHistoryDays>"
   f.puts "    <Color/>"
-  f.puts "    <MasterKeyChanged>#{timestamp}</MasterKeyChanged>"
+  f.puts "    <MasterKeyChanged/>"
   f.puts "    <MasterKeyChangeRec>-1</MasterKeyChangeRec>"
   f.puts "    <MasterKeyChangeForce>-1</MasterKeyChangeForce>"
   f.puts "    <MemoryProtection>"
@@ -192,7 +192,7 @@ File.open(output_file, 'w') do |f|
   f.puts "    <EntryTemplatesGroupChanged>#{timestamp}</EntryTemplatesGroupChanged>"
   f.puts "    <HistoryMaxItems>10</HistoryMaxItems>"
   f.puts "    <HistoryMaxSize>6291456</HistoryMaxSize>"
-  # f.puts "    <LastSelectedGroup>#{general_uuid}</LastSelectedGroup>"
+  f.puts "    <LastSelectedGroup>AAAAAAAAAAAAAAAAAAAAAA==</LastSelectedGroup>"
   f.puts "    <LastTopVisibleGroup>AAAAAAAAAAAAAAAAAAAAAA==</LastTopVisibleGroup>"
   f.puts "    <Binaries/>"
   f.puts "    <CustomData/>"
@@ -250,6 +250,7 @@ File.open(output_file, 'w') do |f|
     f.puts '    </Group>'
   end
   f.puts   '</Group>'
+  f.puts   '<DeletedObjects/>'
   f.puts '</Root>'
   f.puts '</KeePassFile>'
 end
