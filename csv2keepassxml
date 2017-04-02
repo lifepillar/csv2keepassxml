@@ -122,6 +122,16 @@ if input_file.nil?
 end
 
 output_file = File.join(File.dirname(input_file), File.basename(input_file, '.csv') + '.xml')
+if File.exist?(output_file)
+  puts "File exists: #{output_file}"
+  print "Overwrite (y/n)?"
+  overwrite = $stdin.gets
+  if overwrite !~ /^[yY]/
+    puts "Canceled."
+    exit(0)
+  end
+end
+
 options[:dbname] ||= 'NewDatabase'
 
 URL      = options.fetch(:url,       options.fetch(:macoskeychain, false) ? 1  : 0) - 1
