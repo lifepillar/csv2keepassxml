@@ -148,6 +148,7 @@ n = 0
 CSV.foreach(input_file, :headers => options.fetch(:header, true)) do |row|
   n += 1
   if options.has_key?(:group) or options.has_key?(:macoskeychain)
+    row[GROUP] = 'General' if row[GROUP].nil? or row[GROUP].empty?
     items[row[GROUP]] ||= []
     items[row[GROUP]] << password_item(row, coder)
     next
