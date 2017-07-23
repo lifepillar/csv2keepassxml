@@ -32,6 +32,11 @@ def password_item(record, coder)
       item['Notes'] = coder.encode(record[NOTES]) if NOTES > -1
     end
   end
+  # Custom fields
+  CUSTOM.each_pair do |i,name|
+    puts "Writing column #{i} with name #{name} and value #{record[i]}"
+    item[name] = coder.encode(record[i])
+  end
   return item
 end
 
@@ -96,6 +101,9 @@ OptionParser.new do |opts|
   opts.on("-U", "--url NUM", Integer, "Column number of URLs") do |o|
     options[:url] = o
   end
+  opts.on("-F", "--custom-fields NUM,NUM...", Array, "Specify position of custom fields") do |o|
+    options[:custom] = o
+  end
   opts.on("-d", "--dbname NAME", "Name of the database") do |o|
     options[:dbname] = o
   end
@@ -140,13 +148,26 @@ PASSWORD = options.fetch(:password,  options.fetch(:macoskeychain, false) ? 3  :
 TITLE    = options.fetch(:title,     options.fetch(:macoskeychain, false) ? 4  : 0) - 1
 NOTES    = options.fetch(:notes,     options.fetch(:macoskeychain, false) ? 5  : 0) - 1
 GROUP    = options.fetch(:group,     options.fetch(:macoskeychain, false) ? 14 : 0) - 1
+CUSTOM = {}
+k = 1
+options.fetch(:custom, []).each do |i|
+  CUSTOM[i.to_i - 1] = "CustomField#{k}"
+  k += 1
+end
 
 coder = HTMLEntities.new
 
 items = { 'General' => [] }
 n = 0
-CSV.foreach(input_file, :headers => options.fetch(:header, true)) do |row|
+CSV.foreach(input_file, :headers => options.fetch(:header, true), :return_headers => true) do |row|
   n += 1
+  if row.header_row? # Get the names of custom fields from the header
+    options.fetch(:custom, []).each do |i|
+      puts "Custom field at column #{i} with name #{row[i.to_i - 1]}"
+      CUSTOM[i.to_i - 1] = row[i.to_i - 1]
+    end
+    next
+  end
   if options.has_key?(:group) or options.has_key?(:macoskeychain)
     row[GROUP] = 'General' if row[GROUP].nil? or row[GROUP].empty?
     items[row[GROUP]] ||= []
