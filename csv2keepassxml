@@ -162,7 +162,7 @@ CSV.foreach(input_file, :headers => options.fetch(:header, true), :return_header
   n += 1
   if row.header_row? # Get the names of custom fields from the header
     options.fetch(:custom, []).each do |i|
-      puts "Custom field at column #{i}: #{row[i.to_i - 1]}" if options[:verbose]
+      puts "INFO: Custom field at column #{i}: #{row[i.to_i - 1]}" if options[:verbose]
       CUSTOM[i.to_i - 1] = row[i.to_i - 1]
     end
     next
@@ -177,7 +177,7 @@ CSV.foreach(input_file, :headers => options.fetch(:header, true), :return_header
   items['General'] << password_item(row, coder)
 end
 
-puts "Parsed #{n} rows." if options[:verbose]
+puts "INFO: Parsed #{n} rows." if options[:verbose]
 
 num_entries = 0
 timestamp = DateTime.now.strftime("%Y-%m-%dT%H:%M:%SZ")
