@@ -3,7 +3,7 @@
 This is a simple Ruby script that will convert any CSV file into an XML document
 compatible with the KeePass 2 format.
 
-```sh
+```
 
 $ ./csv2keepassxml --help
 Usage: csv2keepassxml [options] <path>
