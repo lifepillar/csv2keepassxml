@@ -32,6 +32,14 @@ def password_item(record, coder)
       item['Notes'] = coder.encode(record[NOTES]) if NOTES > -1
     end
   end
+  # Tags
+  taglist = []
+  TAGS.each do |i|
+    if not (record[i].nil? or record[i].empty?)
+      taglist += record[i].split(/#{TAGSEP}/)
+    end
+  end
+  item['__TAGS__'] = taglist.join(';')
   # Custom fields
   CUSTOM.each_pair do |i,name|
     item[name] = coder.encode(record[i])
@@ -46,7 +54,9 @@ def xml_entry(record, timestamp, options = {})
   s += "<ForegroundColor/>"
   s += "<BackgroundColor/>"
   s += "<OverrideURL/>"
-  s += "<Tags/>"
+  if not (record['__TAGS__'].nil? or record['__TAGS__'].empty?)
+    s += "<Tags>#{record['__TAGS__']}</Tags>"
+  end
   s += "<Times>"
   s += "<LastModificationTime>#{timestamp}</LastModificationTime>"
   s += "<CreationTime>#{timestamp}</CreationTime>"
@@ -57,6 +67,7 @@ def xml_entry(record, timestamp, options = {})
   s += "<LocationChanged>#{timestamp}</LocationChanged>"
   s += "</Times>"
   record.each do |k,v|
+    next if k == '__TAGS__'
     next if v.nil? or v.empty?
     s += "<String>"
     s += "<Key>#{k}</Key>"
@@ -100,7 +111,13 @@ OptionParser.new do |opts|
   opts.on("-U", "--url NUM", Integer, "Column number of URLs") do |o|
     options[:url] = o
   end
-  opts.on("-F", "--custom-fields NUM,NUM...", Array, "Specify position of custom fields") do |o|
+  opts.on("-T", "--tags NUM,NUM,...", Array, "Specify columns containing tags") do |o|
+    options[:tags] = o
+  end
+  opts.on("--tags-separator SEP", String, "Tag separator (default: ;)") do |o|
+    options[:tagsep] = o
+  end
+  opts.on("-F", "--custom-fields NUM,NUM,...", Array, "Specify position of custom fields") do |o|
     options[:custom] = o
   end
   opts.on("-d", "--dbname NAME", "Name of the database") do |o|
@@ -147,6 +164,8 @@ PASSWORD = options.fetch(:password,  options.fetch(:macoskeychain, false) ? 3  :
 TITLE    = options.fetch(:title,     options.fetch(:macoskeychain, false) ? 4  : 0) - 1
 NOTES    = options.fetch(:notes,     options.fetch(:macoskeychain, false) ? 5  : 0) - 1
 GROUP    = options.fetch(:group,     options.fetch(:macoskeychain, false) ? 14 : 0) - 1
+TAGS     = options.fetch(:tags, []).map { |i| i.to_i - 1 }
+TAGSEP   = options.fetch(:tagsep, ';')
 CUSTOM = {}
 k = 1
 options.fetch(:custom, []).each do |i|
