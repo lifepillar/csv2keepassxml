@@ -34,7 +34,6 @@ def password_item(record, coder)
   end
   # Custom fields
   CUSTOM.each_pair do |i,name|
-    puts "Writing column #{i} with name #{name} and value #{record[i]}"
     item[name] = coder.encode(record[i])
   end
   return item
@@ -163,7 +162,7 @@ CSV.foreach(input_file, :headers => options.fetch(:header, true), :return_header
   n += 1
   if row.header_row? # Get the names of custom fields from the header
     options.fetch(:custom, []).each do |i|
-      puts "Custom field at column #{i} with name #{row[i.to_i - 1]}"
+      puts "Custom field at column #{i}: #{row[i.to_i - 1]}" if options[:verbose]
       CUSTOM[i.to_i - 1] = row[i.to_i - 1]
     end
     next
