@@ -91,33 +91,38 @@ end
 # Main
 options = {}
 OptionParser.new do |opts|
-  opts.banner = "Usage: csv2keepassxml [options] <path>"
+  opts.banner = <<-eos
+Usage: csv2keepassxml [options] <path>
 
-  opts.on("-g", "--group NUM", Integer, "Column number of categories") do |o|
+NOTE: Column indexes are 1-based.
+
+eos
+
+  opts.on("-g", "--group NUM", Integer, "Column index for categories") do |o|
     options[:group] = o
   end
-  opts.on("-n", "--notes NUM", Integer, "Column number of notes") do |o|
+  opts.on("-n", "--notes NUM", Integer, "Column index for notes") do |o|
     options[:notes] = o
   end
-  opts.on("-p", "--password NUM", Integer, "Column number of passwords") do |o|
+  opts.on("-p", "--password NUM", Integer, "Column index for passwords") do |o|
     options[:password] = o
   end
-  opts.on("-t", "--title NUM", Integer, "Column number of titles") do |o|
+  opts.on("-t", "--title NUM", Integer, "Column index for titles") do |o|
     options[:title] = o
   end
-  opts.on("-u", "--username NUM", Integer, "Column number of usernames") do |o|
+  opts.on("-u", "--username NUM", Integer, "Column index for usernames") do |o|
     options[:username] = o
   end
-  opts.on("-U", "--url NUM", Integer, "Column number of URLs") do |o|
+  opts.on("-U", "--url NUM", Integer, "Column index for URLs") do |o|
     options[:url] = o
   end
-  opts.on("-T", "--tags NUM,NUM,...", Array, "Specify columns containing tags") do |o|
+  opts.on("-T", "--tags NUM,NUM,...", Array, "Column index(es) for tags") do |o|
     options[:tags] = o
   end
-  opts.on("--tags-separator SEP", String, "Tag separator (default: ;)") do |o|
+  opts.on("--tags-separator SEP", String, "Tag separator (default: ';')") do |o|
     options[:tagsep] = o
   end
-  opts.on("-F", "--custom-fields NUM,NUM,...", Array, "Specify position of custom fields") do |o|
+  opts.on("-F", "--custom-fields NUM,NUM,...", Array, "Column index(es) for custom fields") do |o|
     options[:custom] = o
   end
   opts.on("-d", "--dbname NAME", "Name of the database") do |o|
