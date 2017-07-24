@@ -72,7 +72,7 @@ def xml_entry(record, timestamp, options = {})
     s += "<String>"
     s += "<Key>#{k}</Key>"
     if k == 'Password'
-      s += "<Value ProtectedInMemory=\"True\">#{v}</Value>"
+      s += "<Value ProtectInMemory=\"True\">#{v}</Value>"
     else
       s += "<Value>#{v}</Value>"
     end
