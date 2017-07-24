@@ -38,5 +38,9 @@ If you use macOS, the generated XML file may be imported by
 [MacPass](https://github.com/mstarke/MacPass) (v0.6.2-alpha or later) or
 [KeeWeb](https://keeweb.info).
 
+[KeePassXC](https://github.com/keepassxreboot/keepassxc) can import CSV files,
+although, as far as I know, as of v2.2.0 it cannot import tags or custom
+fields.
+
 [KyPass Companion](http://www.kyuran.be/software/kypass4mac/) for macOS has
-a CSV importer.
+a CSV importer, too.
