@@ -177,14 +177,14 @@ options.fetch(:custom, []).each do |i|
   CUSTOM[i.to_i - 1] = "CustomField#{k}"
   k += 1
 end
+HAS_HEADER = options.fetch(:header, true)
 
 coder = HTMLEntities.new
-
 items = { 'General' => [] }
 n = 0
-CSV.foreach(input_file, :headers => options.fetch(:header, true), :return_headers => true) do |row|
+CSV.foreach(input_file, :headers => HAS_HEADER, :return_headers => true) do |row|
   n += 1
-  if row.header_row? # Get the names of custom fields from the header
+  if HAS_HEADER && n == 1 # Get the names of custom fields from the header
     options.fetch(:custom, []).each do |i|
       puts "INFO: Custom field at column #{i}: #{row[i.to_i - 1]}" if options[:verbose]
       CUSTOM[i.to_i - 1] = row[i.to_i - 1]
