@@ -11,6 +11,8 @@ The script depends on the `htmlentities` library. To install it:
 gem install htmlentities
 ```
 
+Depending on your Ruby configuration, you may need to run this command with
+`sudo`.
 
 ## Synopsis
 
