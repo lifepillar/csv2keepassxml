@@ -54,7 +54,9 @@ def xml_entry(record, timestamp, options = {})
   s += "<ForegroundColor/>"
   s += "<BackgroundColor/>"
   s += "<OverrideURL/>"
-  if not (record['__TAGS__'].nil? or record['__TAGS__'].empty?)
+  if (record['__TAGS__'].nil? or record['__TAGS__'].empty?)
+    s += "<Tags />"
+  else
     s += "<Tags>#{record['__TAGS__']}</Tags>"
   end
   s += "<Times>"
