@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> **As of March 11, 2026, this repository is on [Codeberg](https://codeberg.org/lifepillar/csv2keepassxml).**
+
 # From CSV into KeePass 2 XML
 
 This is a simple Ruby script that will convert any CSV file into an XML document
